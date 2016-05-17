@@ -257,7 +257,7 @@ namespace Oxide.Plugins
 
             public ulong id {
                 get {
-                    if(type == AttackerType.Player) {
+                    if(type == AttackerType.Player && entity is BasePlayer) {
                         return ((BasePlayer)entity).userID;
                     }
 
@@ -267,18 +267,21 @@ namespace Oxide.Plugins
 
             public float x {
                 get {
+                    if(entity == null) return 0;
                     return entity.transform.position.x;
                 }
             }
 
             public float y {
                 get {
+                    if(entity == null) return 0;
                     return entity.transform.position.y;
                 }
             }
 
             public float z {
                 get {
+                    if(entity == null) return 0;
                     return entity.transform.position.z;
                 }
             }
@@ -372,7 +375,7 @@ namespace Oxide.Plugins
 
             public ulong id {
                 get {
-                    if(type == VictimType.Player) {
+                    if(type == VictimType.Player && entity is BasePlayer) {
                         return ((BasePlayer)entity).userID;
                     }
 
@@ -382,18 +385,21 @@ namespace Oxide.Plugins
 
             public float x {
                 get {
+                    if(entity == null) return 0;
                     return entity.transform.position.x;
                 }
             }
 
             public float y {
                 get {
+                    if(entity == null) return 0;
                     return entity.transform.position.y;
                 }
             }
 
             public float z {
                 get {
+                    if(entity == null) return 0;
                     return entity.transform.position.z;
                 }
             }
