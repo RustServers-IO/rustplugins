@@ -7,7 +7,7 @@ using Oxide.Core.Libraries.Covalence;
 
 namespace Oxide.Plugins
 {
-    [Info("CommandRateLimiter", "Calytic", "0.0.6", ResourceId = 1812)]
+    [Info("CommandRateLimiter", "Calytic", "0.0.61", ResourceId = 1812)]
     public class CommandRateLimiter : CovalencePlugin
     {
         private int KickAfter;
@@ -70,7 +70,10 @@ namespace Oxide.Plugins
         {
             if (arg.cmd == null) return null;
 
-            if (arg.connection != null && arg.Player() == null) return true;
+            if (arg.Player() == null)
+            {
+                return null;
+            }
 
             IPlayer player = null;
 #if RUST
@@ -85,9 +88,11 @@ namespace Oxide.Plugins
 
             DateTime lastTime;
 
-            if(lastRun.TryGetValue(player.Id, out lastTime)) {
+            if (lastRun.TryGetValue(player.Id, out lastTime))
+            {
                 TimeSpan ts = DateTime.Now - lastTime;
-                if(ts.TotalMilliseconds < CooldownMS) {
+                if (ts.TotalMilliseconds < CooldownMS)
+                {
                     if (arg.cmd.name != null)
                     {
                         if (commandWhitelist.Contains(arg.cmd.name))
@@ -127,17 +132,19 @@ namespace Oxide.Plugins
                     }
 
                     int c = 0;
+                    bool kicked = false;
                     if (rateCount.TryGetValue(player.Id, out c))
                     {
                         rateCount[player.Id]++;
                         if (KickAfter > 0 && (c + 1) >= KickAfter)
                         {
                             player.ConnectedPlayer.Kick(GetMsg("Kick Message"));
+                            kicked = true;
                         }
                     }
                     else
                     {
-                        rateCount.Add(player.Id, 1); 
+                        rateCount.Add(player.Id, 1);
                     }
 
                     if (ClearRateCountSeconds > 0)
@@ -162,14 +169,18 @@ namespace Oxide.Plugins
                         });
                     }
 
-                    if (SendPlayerMessage)
+                    if (player.ConnectedPlayer != null && SendPlayerMessage && !kicked)
                     {
                         player.Reply(GetMsg("Player Message"));
                     }
-                } else {
+                }
+                else
+                {
                     lastRun[player.Id] = DateTime.Now;
                 }
-            } else {
+            }
+            else
+            {
                 lastRun.Add(player.Id, DateTime.Now);
             }
 
